@@ -1,0 +1,5 @@
+train: /Users/lee/Projects/Yolo工地/datasets-310/images # train images
+val: /Users/lee/Projects/Yolo工地/datasets-310/images # val images
+nc: 2
+# Classes
+names: [cover, soil]
