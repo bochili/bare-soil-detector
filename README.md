@@ -1,24 +1,14 @@
-# Bare Soil Detector (裸土检测器)
+# Bare Soil Detector (建筑工地裸土识别)
 
-This project uses the Ultralytics YOLO framework to train a model for detecting exposed or bare soil in images, often found on construction sites.
+训练了一个基于 Yolo11m 模型的裸土检测模型，基于 310 张工地监控摄像头截图标注，epoch 为 100，效果一般，但可以满足基本需求。
 
-这个项目使用 Ultralytics YOLO 框架来训练一个模型，用于检测图像中（通常是工地上）的裸露土壤。
-
-## Features 功能
-
-- Trains a YOLO model to identify 'soil' and 'cover' classes.
-  训练一个 YOLO 模型来识别 'soil'（裸土）和 'cover'（覆盖物）类别。
-- Provides scripts for training (`train.py`), testing (`test.py`), and a class for easy integration (`SoilDetector` in `soil_detector.py`).
-  提供用于训练 (`train.py`)、测试 (`test.py`) 的脚本，以及一个易于集成的类 (`SoilDetector` in `soil_detector.py`)。
-- Saves detection results with bounding boxes overlaid on the original images.
-  将带有边界框的检测结果保存在原始图片上。
+**注意：训练的数据集没有标注 cover (覆盖篷布)，所以自带模型不能识别出篷布，只能识别裸土，但是数据集如果标注好 cover 就可以直接训练识别了**
 
 ## Requirements 依赖
 
 - Python 3.x
 - Ultralytics YOLO: `pip install ultralytics`
-- (Optional) A CUDA-enabled GPU or Apple Silicon for faster training/inference.
-  （可选）支持 CUDA 的 GPU 或 Apple Silicon 以加速训练/推理。
+- （可选）支持 CUDA 的 GPU 或 Apple Silicon 以加速训练/推理。
 
 ## Setup 设置
 
@@ -39,46 +29,30 @@ This project uses the Ultralytics YOLO framework to train a model for detecting 
 
 3.  **(Optional) Prepare your dataset:**
     **(可选) 准备你的数据集:**
-    - Organize your images and labels in the YOLO format.
-      按照 YOLO 格式组织你的图片和标签。
-    - Update the `train:` and `val:` paths in `soil.yaml` to point to your dataset's image directories. **Important:** Use relative paths or ensure absolute paths are correct for your environment.
-      更新 `soil.yaml` 中的 `train:` 和 `val:` 路径，使其指向你的数据集图片目录。**重要提示：** 使用相对路径或确保绝对路径在你的环境中是正确的。
-    - Verify the class names in `soil.yaml` match your dataset.
-      确认 `soil.yaml` 中的类别名称与你的数据集一致。
+    - 按照 YOLO 格式组织你的图片和标签。
+    - 更新 `soil.yaml` 中的 `train:` 和 `val:` 路径，使其指向你的数据集图片目录。**重要提示：** 使用相对路径或确保绝对路径在你的环境中是正确的。
+    - 确认 `soil.yaml` 中的类别名称与你的数据集一致。
 
 ## Usage 使用
 
 ### Training 训练
 
-- Modify `soil.yaml` to point to your dataset (if not using the example paths).
-  修改 `soil.yaml` 指向你的数据集（如果不使用示例路径）。
-- Run the training script. Adjust `epochs` and `device` as needed.
-  运行训练脚本。根据需要调整 `epochs` 和 `device`。
+- 修改 `soil.yaml` 指向你的数据集（如果不使用示例路径）。
+- 运行训练脚本。根据需要调整 `epochs` 和 `device`。
 
   ```bash
-  # For Apple Silicon (M1/M2/M3...)
-  # 适用于 Apple Silicon (M1/M2/M3...)
   python train.py
-
-  # Or for CPU/CUDA (modify train.py to uncomment the relevant line)
-  # 或者适用于 CPU/CUDA (修改 train.py 取消相关行的注释)
-  # python train.py
   ```
 
-- The trained model (`best.pt`) and results will be saved in the `runs/detect/train*` directory (or similar, depending on YOLO version) by default, or potentially in `train_result/` if training was run previously with that output structure.
-  训练好的模型 (`best.pt`) 和结果默认会保存在 `runs/detect/train*` 目录（或类似目录，取决于 YOLO 版本），或者如果之前训练时是那样的输出结构，则可能在 `train_result/` 目录下。
+- 训练好的模型 (`best.pt`) 和结果默认会保存在 `runs/detect/train*` 目录（或类似目录，取决于 YOLO 版本）。
 
 ### Detection 检测
 
-**Method 1: Using `test.py` (Detects all images in a folder)**
 **方法一：使用 `test.py`（检测文件夹中所有图片）**
 
-- Place your images in the `test_imgs/` folder (or modify the path in `test.py`).
-  将你的图片放入 `test_imgs/` 文件夹（或修改 `test.py` 中的路径）。
-- Ensure the model path in `test.py` (`train_result/weights/best.pt`) is correct.
-  确保 `test.py` 中的模型路径 (`train_result/weights/best.pt`) 正确。
-- Run the script. Results will be saved in `runs/detect/predict*`.
-  运行脚本。结果将保存在 `runs/detect/predict*` 目录。
+- 将你的图片放入 `test_imgs/` 文件夹（或修改 `test.py` 中的路径）。
+- 确保 `test.py` 中的模型路径 (`train_result/weights/best.pt`) 正确。
+- 运行脚本。结果将保存在 `runs/detect/predict*` 目录。
 
   ```bash
   python test.py
@@ -120,12 +94,9 @@ This project uses the Ultralytics YOLO framework to train a model for detecting 
 
   ```
 
-- Results (images and detection info) will be saved in the specified `output_dir` (default: `output/`).
-  结果（图片和检测信息）将保存在指定的 `output_dir`（默认：`output/`）中。
+- 结果（图片和检测信息）将保存在指定的 `output_dir`（默认：`output/`）中。
 
 ## Dataset 数据集
-
-The dataset configuration is defined in `soil.yaml`. It expects images in the specified `train` and `val` directories, with corresponding YOLO format label files (`.txt`).
 
 数据集配置在 `soil.yaml` 中定义。它期望在指定的 `train` 和 `val` 目录中有图片，并附带相应的 YOLO 格式标签文件 (`.txt`)。
 
@@ -134,12 +105,14 @@ Classes / 类别:
 - `cover`: Covered areas (e.g., with nets, tarps) / 覆盖区域（例如，有网、篷布）
 - `soil`: Bare soil / 裸露土壤
 
-## Example Results 示例结果
+组织结构：标准的 YOLO 格式
 
-The `train_result/` directory contains example outputs from a previous training run, including:
-`train_result/` 目录包含一次先前训练运行的示例输出，包括：
+![](./assets/datasets.png)
 
-- `weights/best.pt`: The best trained model weights. / 最佳训练模型权重。
-- Various performance plots (`*.png`). / 各种性能图表 (`*.png`)。
-- Validation batch predictions (`val_batch*.jpg`). / 验证批次的预测结果 (`val_batch*.jpg`)。
-- `results.csv`: Training metrics per epoch. / 每个周期的训练指标。
+## Example Results 识别示例
+
+![](./output/predict_1746167750/1_101e3f48.jpg)
+
+![](./output/predict_1746167750/2_73f73862.jpg)
+
+![](./output/predict_1746167750/3_91562cb7.jpg)

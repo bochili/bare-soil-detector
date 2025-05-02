@@ -80,7 +80,7 @@ class SoilDetector:
 
 # 使用示例
 if __name__ == "__main__":
-    detector = SoilDetector(model_path="best.pt", conf_threshold=0.3, output_dir="output")
+    detector = SoilDetector(model_path="train_result/weights/best.pt", conf_threshold=0.3, output_dir="output")
     
     # 示例图片路径列表
     image_paths = [
